@@ -1,0 +1,24 @@
+select
+'07/03' as week
+,count(senders) as senders
+,count(outvote_contact_id) as recipients
+,count (downloads) as downloads
+from
+(
+select
+ls.outvote_contact_id, c.downloads, c.senders, c.recipients, attempt_date from states_shared_pipeline.coord_outvote_001_person ls
+left join
+(
+ select distinct
+     outvote_contact_id
+     ,SUBSTRING(CONVERT_TIMEZONE('EDT',datetime_sent_utc) ,1,10) as attempt_date
+     ,count(case when script_name in ('Download - YES', 'I’ve downloaded it!', 'I''ve downloaded Vote Joe!') then outvote_contact_id end) as downloads
+     ,count(sender_outvote_user_id) as senders
+     ,count(outvote_contact_id) as recipients
+     from states_shared_pipeline.coord_outvote_001_messages
+     where SUBSTRING(CONVERT_TIMEZONE('EDT',datetime_sent_utc) ,1,10) >= '07/03/2020'
+     and   SUBSTRING(CONVERT_TIMEZONE('EDT',datetime_sent_utc) ,1,10) < '07/10/2020'
+      group by 1,2
+  ) c
+  on ls.outvote_contact_id = c.outvote_contact_id where ls.state_code = 'NV'
+  ) group by 1
