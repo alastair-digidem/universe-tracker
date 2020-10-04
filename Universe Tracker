@@ -1,0 +1,329 @@
+  select
+count(case when called > 0 and texted = 0 then myv_van_id end) as called
+,count(case when texted > 0 and called = 0 then myv_van_id end) as texted
+,count(case when texted > 0 and called > 0 then myv_van_id end) as called_and_texted
+,count(case when texted = 0 and called = 0 then myv_van_id end) as unattempted
+,count(case when canvassed > 0 then myv_van_id end) as canvassed
+,count(case when canvassed = 0 then myv_van_id end) as uncanvassed
+,'GOTV Universe' as universe
+,'since 07/01' as starting_date
+from
+(
+select
+ls.myv_van_id, sum(coalesce(called,0)) as called, sum(coalesce(texted,0)) as texted, sum(coalesce(canvassed,0)) as canvassed from states_nv_reporting.gotv_universe_20200930 ls
+left join
+(
+ select distinct
+     myv_van_id
+     , SUBSTRING(CONVERT_TIMEZONE('EDT',datetime_canvassed) ,1,10) as attempt_date
+      ,count(case when contact_type_id in ('1','19','142') then contact_type_id end) as called
+      ,count(case when contact_type_id in ('37','143') then contact_type_id end) as texted
+      ,count(case when result_id = '14' then result_id end) as canvassed
+     from my_state_van.contacts_contacts_myv
+     where contact_type_id IN ('1','19','142','37','143')
+     and SUBSTRING(CONVERT_TIMEZONE('EDT',datetime_canvassed) ,1,10) >= '2020-07-01'
+      group by 1,2
+  ) c
+  on ls.myv_van_id = c.myv_van_id
+  left join my_state.person_phone_derived ppd on ls.myv_van_id = ppd.myv_van_id
+  where dnc_2020_live_contact_score is not null
+  group by 1
+  )
+  group by 8
+  
+  union
+  
+   select
+count(case when called > 0 and texted = 0 then myv_van_id end) as called
+,count(case when texted > 0 and called = 0 then myv_van_id end) as texted
+,count(case when texted > 0 and called > 0 then myv_van_id end) as called_and_texted
+,count(case when texted = 0 and called = 0 then myv_van_id end) as unattempted
+,count(case when canvassed > 0 then myv_van_id end) as canvassed
+,count(case when canvassed = 0 then myv_van_id end) as uncanvassed
+,'LatinX Universe' as universe
+,'since 07/01' as starting_date
+from
+(
+select
+ls.myv_van_id, sum(coalesce(called,0)) as called, sum(coalesce(texted,0)) as texted, sum(coalesce(canvassed,0)) as canvassed from states_nv_universes.top_persuasion_phones_latinxspanish_20200928 ls
+left join
+(
+ select distinct
+     myv_van_id
+     , SUBSTRING(CONVERT_TIMEZONE('EDT',datetime_canvassed) ,1,10) as attempt_date
+      ,count(case when contact_type_id in ('1','19','142') then contact_type_id end) as called
+      ,count(case when contact_type_id in ('37','143') then contact_type_id end) as texted
+ 	  ,count(case when result_id = '14' then result_id end) as canvassed
+     from my_state_van.contacts_contacts_myv
+     where contact_type_id IN ('1','19','142','37','143')
+     and SUBSTRING(CONVERT_TIMEZONE('EDT',datetime_canvassed) ,1,10) >= '2020-07-01'
+      group by 1,2
+  ) c
+  on ls.myv_van_id = c.myv_van_id
+  left join my_state.person_phone_derived ppd on ls.myv_van_id = ppd.myv_van_id
+  where dnc_2020_live_contact_score is not null
+  group by 1
+  )
+  group by 8
+  
+  union
+  
+    select
+count(case when called > 0 and texted = 0 then myv_van_id end) as called
+,count(case when texted > 0 and called = 0 then myv_van_id end) as texted
+,count(case when texted > 0 and called > 0 then myv_van_id end) as called_and_texted
+,count(case when texted = 0 and called = 0 then myv_van_id end) as unattempted
+,count(case when canvassed > 0 then myv_van_id end) as canvassed
+,count(case when canvassed = 0 then myv_van_id end) as uncanvassed
+,'Clark County Universe' as universe
+,'since 07/01' as starting_date
+from
+(
+select
+ls.myv_van_id, sum(coalesce(called,0)) as called, sum(coalesce(texted,0)) as texted, sum(coalesce(canvassed,0)) as canvassed from states_nv_universes.persuasionvbmed_phones_nv_clark_20200922
+  left join my_state.crosswalks_vanid_to_personid ls using(person_id)
+left join
+(
+ select distinct
+     myv_van_id
+     , SUBSTRING(CONVERT_TIMEZONE('EDT',datetime_canvassed) ,1,10) as attempt_date
+      ,count(case when contact_type_id in ('1','19','142') then contact_type_id end) as called
+      ,count(case when contact_type_id in ('37','143') then contact_type_id end) as texted
+      ,count(case when result_id = '14' then result_id end) as canvassed
+     from my_state_van.contacts_contacts_myv
+     where contact_type_id IN ('1','19','142','37','143')
+     and SUBSTRING(CONVERT_TIMEZONE('EDT',datetime_canvassed) ,1,10) >= '2020-07-01'
+      group by 1,2
+  ) c
+  on ls.myv_van_id = c.myv_van_id
+  left join my_state.person_phone_derived ppd on ls.myv_van_id = ppd.myv_van_id
+  where dnc_2020_live_contact_score is not null
+  group by 1
+  )
+  group by 8
+  
+  union
+  
+      select
+count(case when called > 0 and texted = 0 then myv_van_id end) as called
+,count(case when texted > 0 and called = 0 then myv_van_id end) as texted
+,count(case when texted > 0 and called > 0 then myv_van_id end) as called_and_texted
+,count(case when texted = 0 and called = 0 then myv_van_id end) as unattempted
+,count(case when canvassed > 0 then myv_van_id end) as canvassed
+,count(case when canvassed = 0 then myv_van_id end) as uncanvassed
+,'Washoe County Universe' as universe
+,'since 07/01' as starting_date
+from
+(
+select
+ls.myv_van_id, sum(coalesce(called,0)) as called, sum(coalesce(texted,0)) as texted, sum(coalesce(canvassed,0)) as canvassed from states_nv_universes.persuasionvbmed_phones_nv_washoe_20200921
+  left join my_state.crosswalks_vanid_to_personid ls using(person_id)
+left join
+(
+ select distinct
+     myv_van_id
+     , SUBSTRING(CONVERT_TIMEZONE('EDT',datetime_canvassed) ,1,10) as attempt_date
+      ,count(case when contact_type_id in ('1','19','142') then contact_type_id end) as called
+      ,count(case when contact_type_id in ('37','143') then contact_type_id end) as texted
+      ,count(case when result_id = '14' then result_id end) as canvassed
+     from my_state_van.contacts_contacts_myv
+     where contact_type_id IN ('1','19','142','37','143')
+     and SUBSTRING(CONVERT_TIMEZONE('EDT',datetime_canvassed) ,1,10) >= '2020-07-01'
+      group by 1,2
+  ) c
+  on ls.myv_van_id = c.myv_van_id
+  left join my_state.person_phone_derived ppd on ls.myv_van_id = ppd.myv_van_id
+  where dnc_2020_live_contact_score is not null
+  group by 1
+  )
+  group by 8
+
+ /*add new queries' 07/01 code block above this line*/
+ 
+  /* queries above this line are for 07/01 onwards, queries below are for 09/24 onwards.*/
+
+
+union
+
+select
+count(case when called > 0 and texted = 0 then myv_van_id end) as called
+,count(case when texted > 0 and called = 0 then myv_van_id end) as texted
+,count(case when texted > 0 and called > 0 then myv_van_id end) as called_and_texted
+,count(case when texted = 0 and called = 0 then myv_van_id end) as unattempted
+,count(case when canvassed > 0 then myv_van_id end) as canvassed
+,count(case when canvassed = 0 then myv_van_id end) as uncanvassed
+,'GOTV Universe' as universe
+,'since 09/24' as starting_date
+from
+(
+select
+ls.myv_van_id, sum(coalesce(called,0)) as called, sum(coalesce(texted,0)) as texted, sum(coalesce(canvassed,0)) as canvassed from states_nv_reporting.gotv_universe_20200930 ls
+left join
+(
+ select distinct
+     myv_van_id
+     , SUBSTRING(CONVERT_TIMEZONE('EDT',datetime_canvassed) ,1,10) as attempt_date
+      ,count(case when contact_type_id in ('1','19','142') then contact_type_id end) as called
+      ,count(case when contact_type_id in ('37','143') then contact_type_id end) as texted
+      ,count(case when result_id = '14' then result_id end) as canvassed
+     from my_state_van.contacts_contacts_myv
+     where contact_type_id IN ('1','19','142','37','143')
+     and SUBSTRING(CONVERT_TIMEZONE('EDT',datetime_canvassed) ,1,10) >= '2020-09-24'
+      group by 1,2
+  ) c
+  on ls.myv_van_id = c.myv_van_id
+  left join my_state.person_phone_derived ppd on ls.myv_van_id = ppd.myv_van_id
+  where dnc_2020_live_contact_score is not null
+  group by 1
+  )
+  group by 8
+  
+  union
+  
+   select
+count(case when called > 0 and texted = 0 then myv_van_id end) as called
+,count(case when texted > 0 and called = 0 then myv_van_id end) as texted
+,count(case when texted > 0 and called > 0 then myv_van_id end) as called_and_texted
+,count(case when texted = 0 and called = 0 then myv_van_id end) as unattempted
+,count(case when canvassed > 0 then myv_van_id end) as canvassed
+,count(case when canvassed = 0 then myv_van_id end) as uncanvassed
+,'LatinX Universe' as universe
+,'since 09/24' as starting_date
+from
+(
+select
+ls.myv_van_id, sum(coalesce(called,0)) as called, sum(coalesce(texted,0)) as texted, sum(coalesce(canvassed,0)) as canvassed from states_nv_universes.top_persuasion_phones_latinxspanish_20200928 ls
+left join
+(
+ select distinct
+     myv_van_id
+     , SUBSTRING(CONVERT_TIMEZONE('EDT',datetime_canvassed) ,1,10) as attempt_date
+      ,count(case when contact_type_id in ('1','19','142') then contact_type_id end) as called
+      ,count(case when contact_type_id in ('37','143') then contact_type_id end) as texted
+ 	  ,count(case when result_id = '14' then result_id end) as canvassed
+     from my_state_van.contacts_contacts_myv
+     where contact_type_id IN ('1','19','142','37','143')
+     and SUBSTRING(CONVERT_TIMEZONE('EDT',datetime_canvassed) ,1,10) >= '2020-09-24'
+      group by 1,2
+  ) c
+  on ls.myv_van_id = c.myv_van_id
+  left join my_state.person_phone_derived ppd on ls.myv_van_id = ppd.myv_van_id
+  where dnc_2020_live_contact_score is not null
+  group by 1
+  )
+  group by 8
+  
+  union
+  
+    select
+count(case when called > 0 and texted = 0 then myv_van_id end) as called
+,count(case when texted > 0 and called = 0 then myv_van_id end) as texted
+,count(case when texted > 0 and called > 0 then myv_van_id end) as called_and_texted
+,count(case when texted = 0 and called = 0 then myv_van_id end) as unattempted
+,count(case when canvassed > 0 then myv_van_id end) as canvassed
+,count(case when canvassed = 0 then myv_van_id end) as uncanvassed
+,'Clark County Universe' as universe
+,'since 09/24' as starting_date
+from
+(
+select
+ls.myv_van_id, sum(coalesce(called,0)) as called, sum(coalesce(texted,0)) as texted, sum(coalesce(canvassed,0)) as canvassed from states_nv_universes.persuasionvbmed_phones_nv_clark_20200922
+  left join my_state.crosswalks_vanid_to_personid ls using(person_id)
+left join
+(
+ select distinct
+     myv_van_id
+     , SUBSTRING(CONVERT_TIMEZONE('EDT',datetime_canvassed) ,1,10) as attempt_date
+      ,count(case when contact_type_id in ('1','19','142') then contact_type_id end) as called
+      ,count(case when contact_type_id in ('37','143') then contact_type_id end) as texted
+      ,count(case when result_id = '14' then result_id end) as canvassed
+     from my_state_van.contacts_contacts_myv
+     where contact_type_id IN ('1','19','142','37','143')
+     and SUBSTRING(CONVERT_TIMEZONE('EDT',datetime_canvassed) ,1,10) >= '2020-09-24'
+      group by 1,2
+  ) c
+  on ls.myv_van_id = c.myv_van_id
+  left join my_state.person_phone_derived ppd on ls.myv_van_id = ppd.myv_van_id
+  where dnc_2020_live_contact_score is not null
+  group by 1
+  )
+  group by 8
+  
+  union
+  
+      select
+count(case when called > 0 and texted = 0 then myv_van_id end) as called
+,count(case when texted > 0 and called = 0 then myv_van_id end) as texted
+,count(case when texted > 0 and called > 0 then myv_van_id end) as called_and_texted
+,count(case when texted = 0 and called = 0 then myv_van_id end) as unattempted
+,count(case when canvassed > 0 then myv_van_id end) as canvassed
+,count(case when canvassed = 0 then myv_van_id end) as uncanvassed
+,'Washoe County Universe' as universe
+,'since 09/24' as starting_date
+from
+(
+select
+ls.myv_van_id, sum(coalesce(called,0)) as called, sum(coalesce(texted,0)) as texted, sum(coalesce(canvassed,0)) as canvassed from states_nv_universes.persuasionvbmed_phones_nv_washoe_20200921
+  left join my_state.crosswalks_vanid_to_personid ls using(person_id)
+left join
+(
+ select distinct
+     myv_van_id
+     , SUBSTRING(CONVERT_TIMEZONE('EDT',datetime_canvassed) ,1,10) as attempt_date
+      ,count(case when contact_type_id in ('1','19','142') then contact_type_id end) as called
+      ,count(case when contact_type_id in ('37','143') then contact_type_id end) as texted
+      ,count(case when result_id = '14' then result_id end) as canvassed
+     from my_state_van.contacts_contacts_myv
+     where contact_type_id IN ('1','19','142','37','143')
+     and SUBSTRING(CONVERT_TIMEZONE('EDT',datetime_canvassed) ,1,10) >= '2020-09-24'
+      group by 1,2
+  ) c
+  on ls.myv_van_id = c.myv_van_id
+  left join my_state.person_phone_derived ppd on ls.myv_van_id = ppd.myv_van_id
+  where dnc_2020_live_contact_score is not null
+  group by 1
+  )
+  group by 8
+  
+   /*add new queries' 09/24 code block above this line*/
+ 
+  /* queries above this line are for 09/24 onwards, queries below are for 09/29 onwards.*/
+
+union
+  
+      select
+count(case when called > 0 and texted = 0 then myv_van_id end) as called
+,count(case when texted > 0 and called = 0 then myv_van_id end) as texted
+,count(case when texted > 0 and called > 0 then myv_van_id end) as called_and_texted
+,count(case when texted = 0 and called = 0 then myv_van_id end) as unattempted
+,count(case when canvassed > 0 then myv_van_id end) as canvassed
+,count(case when canvassed = 0 then myv_van_id end) as uncanvassed
+,'Bilingual Universe' as universe
+,'since 09/29' as starting_date
+from
+(
+select
+ls.myv_van_id, sum(coalesce(called,0)) as called, sum(coalesce(texted,0)) as texted, sum(coalesce(canvassed,0)) as canvassed from states_nv_universes.ranked_persuasionvbmed_phones_latinxspanish_nv_20200928
+  left join my_state.crosswalks_vanid_to_personid ls using(person_id)
+left join
+(
+ select distinct
+     myv_van_id
+     , SUBSTRING(CONVERT_TIMEZONE('EDT',datetime_canvassed) ,1,10) as attempt_date
+      ,count(case when contact_type_id in ('1','19','142') then contact_type_id end) as called
+      ,count(case when contact_type_id in ('37','143') then contact_type_id end) as texted
+      ,count(case when result_id = '14' then result_id end) as canvassed
+     from my_state_van.contacts_contacts_myv
+     where contact_type_id IN ('1','19','142','37','143')
+     and SUBSTRING(CONVERT_TIMEZONE('EDT',datetime_canvassed) ,1,10) >= '2020-09-29'
+      group by 1,2
+  ) c
+  on ls.myv_van_id = c.myv_van_id
+  left join my_state.person_phone_derived ppd on ls.myv_van_id = ppd.myv_van_id
+  where dnc_2020_live_contact_score is not null
+  group by 1
+  )
+  group by 8
+  
+  /*order by start. All new universes should be added above this line*/
+  order by starting_date
